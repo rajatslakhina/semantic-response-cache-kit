@@ -138,7 +138,7 @@ Works on macOS with Xcode 16+ and on Linux with Swift 6.0. The SwiftUI explorer 
 
 - **Local (Linux, aarch64, Swift 6.0.3):** clean `rm -rf .build` → `swift build -Xswiftc -warnings-as-errors` → `swift build --build-tests -Xswiftc -warnings-as-errors` → `swift test`: **57 tests, 0 failures**. The numbers quoted above (3/30 vs 14/30, 18/30 vs 27/30, 3-in-27, 0-in-24, 0.44–0.87, 0.55) come from replaying the bundled corpus through the real cache with the same code paths the tests use.
 - **CI:** two jobs on every push — a Linux container that repeats the three commands above from a clean checkout, and a `macos-15` job that compiles `SemanticResponseCacheUI` for `generic/platform=iOS Simulator`. See the [Actions tab](https://github.com/rajatslakhina/semantic-response-cache-kit/actions) for the live result rather than a run ID that goes stale.
-- **Simulator run:** this repo contains no app. The companion demo app's README states exactly whether it was launched on a Simulator; "compiles for a Simulator" and "ran on a Simulator" are reported there as separate facts.
+- **Simulator run:** this repo contains no app. The companion demo app was launched once on an iPhone 17 Pro Simulator (Xcode 26.3, package resolved at 1.0.1) in an interactive follow-up session and its README carries the one real screenshot; "compiles for a Simulator" and "ran on a Simulator" are reported there as separate facts.
 
 ### Tests that would fail against a faked implementation
 
