@@ -123,6 +123,11 @@ final class HashedTrigramEmbedderTests: XCTestCase {
         XCTAssertEqual(a.dimension, 256)
         let norm = a.values.reduce(Float(0)) { $0 + $1 * $1 }.squareRoot()
         XCTAssertEqual(norm, 1, accuracy: 1e-4)
+        // Determinism alone is satisfied by an embedder that returns one fixed
+        // vector for everything; different prompts must embed differently.
+        let c = try embedder.embedSynchronously("Write a haiku about autumn")
+        XCTAssertNotEqual(a, c)
+        XCTAssertLessThan(try XCTUnwrap(a.cosine(c)), 0.5)
     }
 
     /// The property the whole cache relies on, asserted as an *ordering* rather

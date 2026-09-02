@@ -33,14 +33,25 @@ final class SemanticCacheTests: XCTestCase {
         guard case .semanticHit(let similarity, let matched) = hit.source else {
             return XCTFail("expected semantic hit, got \(hit.source)")
         }
-        XCTAssertGreaterThanOrEqual(similarity, 0.55)
+        // Compare the reported similarity against a cosine computed outside the
+        // cache, so the assertion can fail if the cache reports the wrong number.
+        let expectedHit = try XCTUnwrap(embedder.embedSynchronously("Where is my order?")
+            .cosine(embedder.embedSynchronously("where's my order right now?")))
+        XCTAssertEqual(similarity, expectedHit, accuracy: 1e-6)
+        XCTAssertGreaterThanOrEqual(expectedHit, 0.55, "precondition: this paraphrase must clear the threshold")
         XCTAssertEqual(matched, "where is my order")
         XCTAssertTrue(hit.isHit)
 
         guard case .generated(.belowThreshold(let nearest)) = miss.source else {
             return XCTFail("expected below-threshold miss, got \(miss.source)")
         }
-        XCTAssertLessThan(nearest, 0.55)
+        // The paraphrase was served, not stored, so the only entry the unrelated
+        // prompt was compared against is the canonical one; `nearest` must equal
+        // that cosine exactly.
+        let haiku = try embedder.embedSynchronously("Write a haiku about autumn")
+        let expectedNearest = try XCTUnwrap(embedder.embedSynchronously("Where is my order?").cosine(haiku))
+        XCTAssertEqual(nearest, expectedNearest, accuracy: 1e-6)
+        XCTAssertLessThan(expectedNearest, 0.55, "precondition: the unrelated prompt must miss")
         XCTAssertFalse(miss.isHit)
 
         let snapshot = await cache.snapshot()
