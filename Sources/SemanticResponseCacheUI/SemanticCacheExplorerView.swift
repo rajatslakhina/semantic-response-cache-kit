@@ -192,7 +192,7 @@ public struct SemanticCacheExplorerView: View {
         } header: {
             Text("Policy")
         } footer: {
-            Text("Threshold and eviction take effect on the next Start fresh.")
+            Text("Threshold and eviction take effect on the next Start fresh; Compare uses the current threshold immediately.")
         }
     }
 
